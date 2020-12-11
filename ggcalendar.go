@@ -602,7 +602,7 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
 	            event.Start = event_time
 	            event.Title = i.Summary
 	            event.Type = normal
-	            event.Start_s = fmt.Sprintf("%d:%02d",event_time.Hour(),event_time.Minute())
+	            event.Start_s = fmt.Sprintf("%02d:%02d",event_time.Hour(),event_time.Minute())
 	            event_key := fmt.Sprintf("%d-%02d-%02d",event_time.Year(),event_time.Month(),event_time.Day())
 	            event_map[event_key] = append(event_map[event_key],event)
 	        } else {
