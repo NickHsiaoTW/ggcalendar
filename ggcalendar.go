@@ -84,11 +84,6 @@ func count_half(s string) int {
 			size += 1
 			continue
 		}
-
-    if runeValue == 10 {
-			continue
-    }
-		panic("cannot determine!")
 	}
 	return size
 }
