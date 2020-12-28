@@ -227,7 +227,7 @@ func padding_space(slice_s *[]string,items []int,count int) {
     }
 }
 
-func padding_newline(slice_s *[]string) {
+func draw_newline(slice_s *[]string) {
     for i := 0; i < len(*slice_s); i++ {
       (*slice_s)[i] = (*slice_s)[i] + "\n"
     }
@@ -257,7 +257,7 @@ func draw_horizontal_border_and_newline(slice_s *[]string) {
   }
   draw_text(slice_s, white, text2draw, CALENDAR_WIDTH)
   //padding_space(slice_s,[]int{red,yellow,cyan,magenta},CALENDAR_WIDTH)
-  padding_newline(slice_s)
+  draw_newline(slice_s)
 }
 
 func get_width(runeValue rune) int{
@@ -649,22 +649,27 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
   text2draw := "+"+padding_string("-",CALENDAR_WIDTH-2)+"+"
   draw_text(&all_line,white,text2draw,CALENDAR_WIDTH)
        
-  padding_newline(&all_line)
+  draw_newline(&all_line)
   
   //draw year month row
   fmt.Println("Draw year month row")
   year_month := fmt.Sprintf("%d %s",Today.Year(),Today.Month())
   year_month = " "+year_month+padding_string(" ",CALENDAR_WIDTH-1-count_half(year_month))
-  all_line[yellow] = all_line[yellow] + year_month
-  all_line[white] += "|"+padding_string(" ",CALENDAR_WIDTH-2)+"|"
-  padding_space(&all_line,[]int{red,cyan,magenta},CALENDAR_WIDTH)
-  padding_newline(&all_line)
+  
+  //all_line[yellow] = all_line[yellow] + year_month
+  //all_line[white] += "|"+padding_string(" ",CALENDAR_WIDTH-2)+"|"
+  //padding_space(&all_line,[]int{red,cyan,magenta},CALENDAR_WIDTH)
+  draw_text(&all_line,white,"|",1)
+  draw_text(&all_line,yellow,year_month,CALENDAR_WIDTH-2)
+  draw_text(&all_line,white,"|",1)
+  draw_newline(&all_line)
   
   draw_horizontal_border_and_newline(&all_line)
   
   
   //draw week days
   fmt.Println("Draw week days")
+  /*
   all_line[white] += "|          |          |          |          |          |          |          |"
   all_line[yellow] += " "+"Sunday"+padding_string(" ",CELL_WIDTH-len("Sunday"))
   all_line[yellow] += " "+"Monday"+padding_string(" ",CELL_WIDTH-len("Monday"))
@@ -673,9 +678,26 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
   all_line[yellow] += " "+"Thursday"+padding_string(" ",CELL_WIDTH-len("Thursday")) 
   all_line[yellow] += " "+"Friday"+padding_string(" ",CELL_WIDTH-len("Friday")) 
   all_line[yellow] += " "+"Saturday"+padding_string(" ",CELL_WIDTH-len("Saturday")) + " "
-
   padding_space(&all_line,[]int{red,cyan,magenta},CALENDAR_WIDTH)
-  padding_newline(&all_line)
+  */
+  draw_text(&all_line,white,"|",1)
+  draw_text(&all_line,yellow,"Sunday",CELL_WIDTH)
+  draw_text(&all_line,white,"|",1)
+  draw_text(&all_line,yellow,"Monday",CELL_WIDTH)
+  draw_text(&all_line,white,"|",1)
+  draw_text(&all_line,yellow,"Tuesday",CELL_WIDTH) 
+  draw_text(&all_line,white,"|",1)
+  draw_text(&all_line,yellow,"Wednesday",CELL_WIDTH)
+  draw_text(&all_line,white,"|",1)
+  draw_text(&all_line,yellow,"Thursday",CELL_WIDTH)
+  draw_text(&all_line,white,"|",1)
+  draw_text(&all_line,yellow,"Friday",CELL_WIDTH)
+  draw_text(&all_line,white,"|",1)
+  draw_text(&all_line,yellow,"Saturday",CELL_WIDTH)
+  draw_text(&all_line,white,"|",1)      
+      
+  
+  draw_newline(&all_line)
 
   draw_horizontal_border_and_newline(&all_line)
   
@@ -713,7 +735,7 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
      draw_text(&all_line,white,"|",1)
      draw_day(&all_line,sat_t, sat_s, today_s)
      draw_text(&all_line,white,"|",1)
-     padding_newline(&all_line)
+     draw_newline(&all_line)
      
      finish := false
      for !finish {
@@ -762,7 +784,7 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
          } 
          
          draw_text(&all_line,white,"|",1)
-         padding_newline(&all_line)
+         draw_newline(&all_line)
          
          finish = end_loop                    
      }//end of for !finish
@@ -776,7 +798,7 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
      } else {
        text2draw := "+"+padding_string("-",CALENDAR_WIDTH-2)+"+"
        draw_text(&all_line,white,text2draw,CALENDAR_WIDTH)
-       padding_newline(&all_line)
+       draw_newline(&all_line)
      }
   }//end of for i := 0; i < 5; i++
   
