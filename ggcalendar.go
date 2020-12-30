@@ -30,8 +30,17 @@ const (
         red = iota
         cyan = iota
         magenta = iota
+        conky = iota
 )
 
+const COLOR_END string = "${color}"
+func getColor(i int) string {
+  if i > magenta {
+    return COLOR_END
+  }
+  color_table := []string{"${color white}","${color yellow}","${color red}","${color cyan}","${color magenta}"}
+  return color_table[i]
+}
 const helloday int = magenta
 const allday int = cyan
 const normal int = cyan
@@ -203,13 +212,15 @@ func get_and_remove_first(slice *[]string) string{
 }
 
 func draw_text(slice_s *[]string, color int, draw_t string, padding int) {
-    for i := 0; i < len(*slice_s); i++ {
+    for i := 0; i < len(*slice_s)-1; i++ {
       if i == color {
         (*slice_s)[i] = (*slice_s)[i] + draw_t + padding_string(" ",padding - count_half(draw_t))
       } else {
         (*slice_s)[i] = (*slice_s)[i] + padding_string(" ",padding)
       }
     }
+    k := len(*slice_s)-1
+    (*slice_s)[k] = (*slice_s)[k] + getColor(color) + draw_t + padding_string(" ",padding - count_half(draw_t)) + COLOR_END
 }
 
 func draw_day(slice_s *[]string, day_t time.Time,day_s string,today_s string) {
@@ -220,17 +231,12 @@ func draw_day(slice_s *[]string, day_t time.Time,day_s string,today_s string) {
      }  
 }
 
-func padding_space(slice_s *[]string,items []int,count int) {
-    spaces := padding_string(" ",count)
-    for _,i := range items {
-      (*slice_s)[i] = (*slice_s)[i] + spaces
-    }
-}
-
 func draw_newline(slice_s *[]string) {
-    for i := 0; i < len(*slice_s); i++ {
+    for i := 0; i < len(*slice_s)-1; i++ {
       (*slice_s)[i] = (*slice_s)[i] + "\n"
     }
+    k := len(*slice_s)-1
+    (*slice_s)[k] = (*slice_s)[k] + COLOR_END + "\n" + COLOR_END
 }
 
 func draw_1cell_1row(event_s []string,slice_s *[]string) []string{
@@ -256,7 +262,6 @@ func draw_horizontal_border_and_newline(slice_s *[]string) {
     text2draw = text2draw + padding_string("-",CELL_WIDTH) + "+"
   }
   draw_text(slice_s, white, text2draw, CALENDAR_WIDTH)
-  //padding_space(slice_s,[]int{red,yellow,cyan,magenta},CALENDAR_WIDTH)
   draw_newline(slice_s)
 }
 
@@ -271,32 +276,6 @@ func get_width(runeValue rune) int{
 		return 0
 }
 
-/*
-func print_mono_color(drawable []string) {
- 
-  color_count := len(drawable)
-  var drawable_rune [][]rune
-  var rune_count []int
-  
-  for i:=0;i<color_count;i++{
-    rune_single_color := []rune(drawable[i])
-    drawable_rune = append(drawable_rune,rune_single_color)
-    rune_count = append(rune_count,len(rune_single_color))
-  }
-  index := make([]int, color_count)
-  mono_line := ""
-  for true {
-    var new_added rune
-    var new_added_width int
-    
-    new_added = drawable_rune[white][index[white]]
-    new_added_width = get_width(new_added)
-    if (new_added != 32 && new_added_width > 0){
-       index[white] += 
-    }
-  }
-}
-*/
 
 func sync_desktopcal(srv *calendar.Service,calendar_ids string,dbpath string) {
   var calendars []string
@@ -554,6 +533,7 @@ func sync_desktopcal(srv *calendar.Service,calendar_ids string,dbpath string) {
 	fmt.Println("NOCHANGE")
 }
 
+
 func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_encoding string) {
   var calendars []string
   
@@ -640,7 +620,7 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
   first_day_month := Today.AddDate(0,0,1-Today.Day())
   first_day_draw := first_day_month.AddDate(0, 0, -int(first_day_month.Weekday()))
   
-  all_line := make([]string, 5)
+  all_line := make([]string, int(conky)+1)
   
   
   //draw firt row
@@ -654,11 +634,6 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
   //draw year month row
   fmt.Println("Draw year month row")
   year_month := fmt.Sprintf("%d %s",Today.Year(),Today.Month())
-  year_month = " "+year_month+padding_string(" ",CALENDAR_WIDTH-1-count_half(year_month))
-  
-  //all_line[yellow] = all_line[yellow] + year_month
-  //all_line[white] += "|"+padding_string(" ",CALENDAR_WIDTH-2)+"|"
-  //padding_space(&all_line,[]int{red,cyan,magenta},CALENDAR_WIDTH)
   draw_text(&all_line,white,"|",1)
   draw_text(&all_line,yellow,year_month,CALENDAR_WIDTH-2)
   draw_text(&all_line,white,"|",1)
@@ -669,17 +644,6 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
   
   //draw week days
   fmt.Println("Draw week days")
-  /*
-  all_line[white] += "|          |          |          |          |          |          |          |"
-  all_line[yellow] += " "+"Sunday"+padding_string(" ",CELL_WIDTH-len("Sunday"))
-  all_line[yellow] += " "+"Monday"+padding_string(" ",CELL_WIDTH-len("Monday"))
-  all_line[yellow] += " "+"Tuesday"+padding_string(" ",CELL_WIDTH-len("Tuesday"))  
-  all_line[yellow] += " "+"Wednesday"+padding_string(" ",CELL_WIDTH-len("Wednesday")) 
-  all_line[yellow] += " "+"Thursday"+padding_string(" ",CELL_WIDTH-len("Thursday")) 
-  all_line[yellow] += " "+"Friday"+padding_string(" ",CELL_WIDTH-len("Friday")) 
-  all_line[yellow] += " "+"Saturday"+padding_string(" ",CELL_WIDTH-len("Saturday")) + " "
-  padding_space(&all_line,[]int{red,cyan,magenta},CALENDAR_WIDTH)
-  */
   draw_text(&all_line,white,"|",1)
   draw_text(&all_line,yellow,"Sunday",CELL_WIDTH)
   draw_text(&all_line,white,"|",1)
@@ -817,6 +781,8 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
     write2UTF8(path+"cyan_line.txt",all_line[cyan])
     write2UTF8(path+"red_line.txt",all_line[red])
     write2UTF8(path+"magenta_line.txt",all_line[magenta])
+  } else if file_encoding == "conky" {
+    write2UTF8(path+"ggcalendar4conky.txt",all_line[conky])
   } else {
     fmt.Println("Unknown encoding:"+file_encoding)
   }
@@ -899,7 +865,7 @@ func main() {
 	
 	//finish authentication
 	
-	function := flag.String("func", "list_calendars", "main function list_calendars/list_events/draw_gcalcli")
+	function := flag.String("func", "list_calendars", "main function list_calendars/list_events/draw_gcalcli/draw_conky")
 	file_encoding := flag.String("e", "utf-8", "utf-8 or utf-16")
 	write_path := flag.String("p", "./", "path to widget location,must be C:/xxx/xxx format")
 	db_path := flag.String("d", "./calendar.db", "path to db ex:'C:/Users/xxxx/AppData/Roaming/DesktopCal/Db/calendar.db'") 
@@ -927,7 +893,10 @@ func main() {
     case *function == "sync_desktopcal": 
         sync_desktopcal(srv, *calendars2load, *db_path)     
         return   
-    default:
+    case *function == "draw_conky": 
+        draw_gcalcli(srv, *calendars2load, *write_path, "conky")     
+        return
+   default:
         fmt.Printf("Unknown function:%s,must be one of list_calendars/list_events/draw_gcalcli\n",*function) 
 	} 
 }
