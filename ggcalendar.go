@@ -177,7 +177,7 @@ func fill_cell(time_key string, events []Event) []string{
       var new_added []string
       event := events[i]
       
-      if (event.Start_s != "0:000" && event.Start_s != "0:001" && event.Start_s != "") {
+      if (event.Start_s != "0:000" && event.Start_s != "0:001" && event.Start_s != "" && event.Type != now) {
         if count_half(event.Start_s+" "+event.Title) <= CELL_WIDTH {
           new_added = split_string(event.Start_s+" "+event.Title,CELL_WIDTH)
         } else {
@@ -600,18 +600,18 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
 	  }
 	} 
 
-  //final ,add red ------ as an event
-  fmt.Println("Add now event")
-  var event Event
-  event.Start = Today
-  event.Title = padding_string("-",CELL_WIDTH)
-  event.Start_s = ""
-  event.Type = now
-  event_key := fmt.Sprintf("%d-%02d-%02d",Today.Year(),Today.Month(),Today.Day())
-  event_map[event_key] = append(event_map[event_key],event)
-     
+  today_key := fmt.Sprintf("%d-%02d-%02d",Today.Year(),Today.Month(),Today.Day())
+  if len(event_map[today_key]) > 0 {
+    //final ,add red ------ as an event if there is any event today 
+    fmt.Println("Add now event")
+    var event Event
+    event.Start = Today
+    event.Title = padding_string("-",CELL_WIDTH)
+    event.Start_s = fmt.Sprintf("%02d:%02d",Today.Hour(),Today.Minute())
+    event.Type = now
+    event_map[today_key] = append(event_map[today_key],event)
+  }
 
-     
   for k,v := range event_map {
       event_map_print[k] = fill_cell(k,v)
   }
