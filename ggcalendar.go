@@ -669,7 +669,7 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
   fmt.Println("Draw day events starts")
   today_s := fmt.Sprintf("%d-%02d-%02d",Today.Year(),Today.Month(),Today.Day())
   sun_t := first_day_draw
-  for i := 0; i < 5; i++ {
+  for i := 0; i < 6; i++ {
      sun_s := fmt.Sprintf("%d-%02d-%02d",sun_t.Year(),sun_t.Month(),sun_t.Day())
      mon_t := sun_t.AddDate(0,0,1)
      mon_s := fmt.Sprintf("%d-%02d-%02d",mon_t.Year(),mon_t.Month(),mon_t.Day())
@@ -757,14 +757,15 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
              
      //end of single loop
      sun_t = sun_t.AddDate(0,0,7)
-     if i < 4 {
+     if sun_t.Month() == Today.Month() {
        draw_horizontal_border_and_newline(&all_line)  
      } else {
        text2draw := "+"+padding_string("-",CALENDAR_WIDTH-2)+"+"
        draw_text(&all_line,white,text2draw,CALENDAR_WIDTH)
        draw_newline(&all_line)
+       break
      }
-  }//end of for i := 0; i < 5; i++
+  }//end of for i := 0; i < 6; i++
   
   //print_mono_color(all_line)
   
