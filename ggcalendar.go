@@ -565,7 +565,8 @@ func draw_gcalcli(srv *calendar.Service,calendar_ids string,path string, file_en
 		items, dataok := get_events(srv, c_id, 1, 1) 
 	  if !dataok {
 	      fmt.Println("Unable to get events")
-	      continue
+	      //no data ready,finish program to prevent writting empty data to file
+	      return
 	  }
 	  fmt.Printf("Got %d items\n",len(items))
 	  if len(items) > 0 {
